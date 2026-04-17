@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NextCrew Community - Member List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+        
+        :root {
+            --nc-primary: #0f172a;
+            --nc-accent: #0284c7;
+            --nc-bg-gray: #f8fafc;
+            --nc-border: #e2e8f0;
+            --insta-brand: #d62976;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .header-container {
+            border-bottom: 1px solid var(--nc-border);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            position: sticky; top: 0; z-index: 50;
+        }
+
+        .controls-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            flex-wrap: wrap; 
+            justify-content: flex-end;
+        }
+
+        .filter-select {
+            padding: 6px 18px 6px 8px; background: var(--nc-bg-gray);
+            border: 1px solid var(--nc-border); border-radius: 6px;
+            font-size: 11px; font-weight: 600; color: #475569;
+            outline: none; cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 6px center; background-size: 8px;
+            min-width: 90px;
+        }
+
+        .search-input-wrapper { position: relative; width: 130px; }
+        .search-input-wrapper i { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 10px; }
+        .search-input-wrapper input {
+            width: 100%; padding: 6px 10px 6px 28px; background: var(--nc-bg-gray);
+            border: 1px solid var(--nc-border); border-radius: 6px; font-size: 11px; outline: none;
+        }
+
+        .tab-btn {
+            padding: 12px 14px; font-size: 11px; font-weight: 700;
+            color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active { color: var(--nc-accent); border-bottom-color: var(--nc-accent); }
+
+        .custom-table th {
+            background: var(--nc-bg-gray); padding: 10px 8px; font-size: 10px;
+            font-weight: 800; color: #64748b; border-bottom: 1px solid var(--nc-border);
+            text-align: left; text-transform: uppercase;
+        }
+        .custom-table td { padding: 12px 8px; border-bottom: 1px solid #f1f5f9; font-size: 12px; white-space: nowrap; }
+        
+        .member-row { cursor: pointer; transition: background 0.1s; }
+        .member-row:hover { background-color: #f8fafc; }
+
+        .insta-tag {
+            display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9;
+            padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; 
+            text-decoration: none; color: inherit; transition: all 0.2s;
+        }
+        .insta-tag:hover { background: #e0f2fe; }
+        .insta-tag i { color: var(--insta-brand); }
+        
+        /* 共通バッジスタイル */
+        .grade-circle { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; line-height: 1; }
+        .grade-badge { 
+            font-size: 10px; font-weight: 800; height: 20px; 
+            padding: 0 8px; border-radius: 6px; 
+            display: inline-flex; align-items: center; justify-content: center; 
+            line-height: 1; vertical-align: middle;
+        }
+
+        /* 一覧表用ミニタグ */
+        .list-mini-tag { 
+            font-size: 8px; font-weight: 800; padding: 1px 4px; 
+            border-radius: 3px; display: inline-flex; align-items: center; 
+            line-height: 1; white-space: nowrap; margin-left: 2px;
+        }
+
+        /* 配色設定 (詳細 & 一覧 共通) */
+        .grade-s, .ir-1, .list-ir-1 { background: #f3e8ff; color: #6b21a8; border: 1px solid rgba(107, 33, 168, 0.1); } 
+        .grade-a { background: #ffe4e6; color: #881337; border: 1px solid rgba(136, 19, 55, 0.1); } 
+        .grade-b, .ir-2, .list-ir-2 { background: #ffedd5; color: #c2410c; border: 1px solid rgba(194, 65, 12, 0.1); } 
+        .grade-c { background: #fef9c3; color: #854d0e; border: 1px solid rgba(133, 77, 14, 0.1); } 
+        .grade-d, .ir-3, .list-ir-3 { background: #dcfce7; color: #166534; border: 1px solid rgba(22, 101, 52, 0.1); } 
+        .grade-e { background: #dbeafe; color: #1e40af; border: 1px solid rgba(30, 64, 175, 0.1); } 
+
+        .ir-t, .list-ir-t { background: #0f172a; color: #fbbf24; border: 1px solid #0f172a; }
+        .koushi-badge, .list-koushi { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+        .staff-badge, .list-staff { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .fresh-badge, .list-fresh { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
+
+        /* カテゴリ用バッジ */
+        .cat-badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; min-width: 50px; text-align: center; display: inline-block; }
+        .cat-u12 { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .cat-u15 { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
+        .cat-u18 { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+        .cat-shakaijin { background: #faf5ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+        .cat-gakuren { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+
+        .sortable { cursor: pointer; user-select: none; position: relative; padding-right: 18px !important; }
+        .sortable::after {
+            content: '\f0dc'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; right: 4px; opacity: 0.3; font-size: 8px;
+        }
+        .sortable.asc::after { content: '\f0de'; opacity: 1; color: var(--nc-accent); }
+        .sortable.desc::after { content: '\f0dd'; opacity: 1; color: var(--nc-accent); }
+
+        #memberModal { transition: opacity 0.25s; }
+        .modal-body { transform: scale(0.95); transition: transform 0.25s; }
+        #memberModal.active .modal-body { transform: scale(1); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- 詳細モーダル -->
+    <div id="memberModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" onclick="closeModal()">
+        <div class="modal-body bg-white w-full max-w-[340px] rounded-[24px] shadow-2xl overflow-hidden relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 p-2 z-10">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="p-8 pb-10 text-center">
+                <div class="flex flex-row items-center justify-start gap-5 mb-6 text-left">
+                    <div class="shrink-0">
+                        <img id="modalPatchImg" src="" class="w-[64px] h-auto object-contain" alt="JBA Patch">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                            <div id="modalGradeLabel"></div>
+                            <div id="modalIRLabel" class="hidden"></div>
+                            <div id="modalKoushiLabel" class="hidden"></div>
+                            <div id="modalStaffLabel" class="hidden"></div>
+                            <div id="modalFreshLabel" class="hidden"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span id="modalRuby" class="text-[10px] font-bold text-slate-400 tracking-widest leading-none mb-1 hidden"></span>
+                            <h2 id="modalName" class="text-[24px] font-black text-slate-900 tracking-tight leading-none"></h2>
+                            <p id="modalInstaID" class="text-[12px] font-bold text-slate-500 mt-1.5 flex items-center gap-1"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-6 text-left">
+                    <div class="bg-[#f8fafc] p-4 rounded-2xl">
+                        <p class="text-[10px] text-slate-400 font-bold mb-1">所属</p>
+                        <p id="modalRegion" class="text-[14px] font-black text-slate-800"></p>
+                    </div>
+                    <div class="bg-[#f8fafc] p-4 rounded-2xl">
+                        <p class="text-[10px] text-slate-400 font-bold mb-1">カテゴリ</p>
+                        <p id="modalCategory" class="text-[14px] font-black text-slate-800"></p>
+                    </div>
+                </div>
+
+                <div class="border border-slate-100 p-5 rounded-2xl mb-6 text-left relative">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Detail Info</span>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[12px] text-slate-400 font-bold">生年月日</span>
+                            <span id="modalBirthday" class="text-[13px] font-medium text-slate-600 tracking-wide"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[12px] text-slate-400 font-bold">年齢</span>
+                            <span id="modalAge" class="text-[13px] font-black text-slate-800"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[12px] text-slate-400 font-bold">学年</span>
+                            <span id="modalSchoolYear" class="text-[13px] font-black text-slate-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <a id="modalInstaBtn" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-[#a855f7] to-[#ec4899] text-white rounded-xl font-bold shadow-lg shadow-pink-500/30 hover:opacity-90 transition-opacity text-[14px]">
+                    <i class="fa-brands fa-instagram text-lg"></i><span>プロフィールを表示</span>
+                </a>
+                
+                <div class="mt-3 text-center">
+                    <a id="modalInstaUrl" href="#" target="_blank" class="text-[11px] text-slate-400 hover:text-slate-600 underline break-all select-all"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="header-container">
+        <div class="max-w-[1440px] mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+                    <img src="NextCrew-icon.png" alt="NC" class="w-full h-full object-contain bg-slate-900 text-white font-black italic text-xs flex items-center justify-center" onerror="this.outerHTML='<div class=\\'w-full h-full bg-slate-900 flex items-center justify-center text-white font-black italic\\'>NC</div>'">
+                </div>
+                <div>
+                    <h1 class="text-base font-black tracking-tight text-slate-900 leading-none">NextCrew Community</h1>
+                </div>
+            </div>
+
+            <div class="controls-wrapper">
+                <select id="blockFilter" class="filter-select" onchange="handleBlockChange()">
+                    <option value="all">ブロック: ALL</option>
+                    <option value="北海道">北海道</option><option value="東北">東北</option><option value="関東">関東</option>
+                    <option value="北信越">北信越</option><option value="東海">東海</option><option value="近畿">近畿</option>
+                    <option value="中国">中国</option><option value="四国">四国</option><option value="九州">九州</option>
+                </select>
+                <select id="schoolYearFilter" class="filter-select" onchange="applyFilters()">
+                    <option value="all">学年: ALL</option>
+                    <option value="社会人">社会人</option><option value="大学4年生">大学4年生</option><option value="大学3年生">大学3年生</option>
+                    <option value="大学2年生">大学2年生</option><option value="大学1年生">大学1年生</option><option value="高校3年生">高校3年生</option>
+                    <option value="高校2年生">高校2年生</option><option value="高校1年生">高校1年生</option><option value="中学3年生">中学3年生</option>
+                </select>
+                <select id="categoryFilter" class="filter-select" onchange="applyFilters()">
+                    <option value="all">カテゴリ: ALL</option>
+                    <option value="U12">U12</option><option value="U15">U15</option><option value="U18">U18</option>
+                    <option value="学連">学連</option><option value="社会人">社会人</option>
+                </select>
+                <div class="search-input-wrapper"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="searchInput" placeholder="キーワードを入力" oninput="applyFilters()"></div>
+                
+                <button onclick="exportToHTML()" class="p-2 text-slate-400 hover:text-slate-600 transition" title="このアプリをダウンロード">
+                    <i class="fa-solid fa-download text-lg"></i>
+                </button>
+            </div>
+        </div>
+        <div class="max-w-[1440px] mx-auto px-4 flex border-t border-slate-50 items-center overflow-x-auto no-scrollbar">
+            <button onclick="filterGrade('all')" id="btn-all" class="tab-btn active">ALL</button>
+            <button onclick="filterGrade('S級')" id="btn-S" class="tab-btn">S級</button>
+            <button onclick="filterGrade('A級')" id="btn-A" class="tab-btn">A級</button>
+            <button onclick="filterGrade('B級')" id="btn-B" class="tab-btn">B級</button>
+            <button onclick="filterGrade('C級')" id="btn-C" class="tab-btn">C級</button>
+            <button onclick="filterGrade('D級')" id="btn-D" class="tab-btn">D級</button>
+            <button onclick="filterGrade('E級')" id="btn-E" class="tab-btn">E級</button>
+            <div class="ml-auto py-3 shrink-0"><span id="visibleCount" class="text-[12px] font-black text-slate-900">0</span><span class="text-[8px] text-slate-400 font-bold ml-0.5 uppercase">Users</span></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1440px] mx-auto p-4">
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="custom-table w-full" id="memberTable">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center sortable" onclick="setSort('grade')">級</th>
+                            <th class="sortable" onclick="setSort('name')">氏名</th>
+                            <th>Instagram</th>
+                            <th>生年月日</th>
+                            <th class="text-center sortable" onclick="setSort('age')">年齢</th>
+                            <th class="sortable" onclick="setSort('schoolYear')">学年</th>
+                            <th class="sortable" onclick="setSort('region')">所属</th>
+                            <th class="text-center sortable" onclick="setSort('category')">カテゴリ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden py-24 text-center text-slate-400 text-[11px] font-bold uppercase tracking-widest">No matching members found</div>
+        </div>
+    </main>
+
+    <script>
+        const blockData = {
+            "北海道": ["北海道"], "東北": ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
+            "関東": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県", "山梨県"],
+            "北信越": ["新潟県", "富山県", "石川県", "福井県", "長野県"],
+            "東海": ["岐阜県", "静岡県", "愛知県", "三重県"],
+            "近畿": ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"],
+            "中国": ["鳥取県", "島根県", "岡山県", "広島県", "山口県"],
+            "四国": ["徳島県", "香川県", "愛媛県", "高知県"],
+            "九州": ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"]
+        };
+        const prefOrder = Object.values(blockData).flat();
+
+        const members = [
+            { id: 1, grade: "A級", name: "熊野 悠生", ruby: "くまの ゆうせい", instagram: "kuma_salamander.7", birthday: "2004/06/21", schoolYear: "大学4年生", region: "山口県", category: "U12", ir: "3級", isInstructor: true },
+            { id: 2, grade: "B級", name: "成田 喜輝", ruby: "なりた よしてる", instagram: "y_c.3k.e", birthday: "1993/09/15", schoolYear: "社会人", region: "秋田県", category: "U18", ir: "3級", isInstructor: true },
+            { id: 3, grade: "B級", name: "関添 聖", ruby: "せきぞえ さとし", instagram: "satoshi_1.1", birthday: "2004/10/01", schoolYear: "大学4年生", region: "青森県/岩手県", category: "社会人" },
+            { id: 4, grade: "B級", name: "齊藤 之喜", ruby: "さいとう ゆきひさ", instagram: "s.yuki._.0604", birthday: "2005/06/04", schoolYear: "大学3年生", region: "兵庫県", category: "学連", isFresh: true },
+            { id: 5, grade: "B級", name: "金本 桜海", ruby: "かなもと おうが", instagram: "ohgq_31", birthday: "2006/03/31", schoolYear: "社会人", region: "福岡県", category: "U18", isFresh: true },
+            { id: 6, grade: "B級", name: "奥村 楓人", ruby: "おくむら ふうと", instagram: "fuuto07", birthday: "-", schoolYear: "大学2年生", region: "奈良県", category: "社会人" },
+            { id: 7, grade: "B級", name: "西村 櫂", ruby: "にしむら かい", instagram: "kaichan2222", birthday: "-", schoolYear: "大学2年生", region: "鳥取県", category: "U18", ir: "3級" },
+            { id: 8, grade: "B級", name: "中川 輝空", ruby: "なかがわ そら", instagram: "nakasora_0828", birthday: "2007/08/28", schoolYear: "大学1年生", region: "福井県", category: "U18" },
+            { id: 9, grade: "B級", name: "町田 莉仁", ruby: "まちだ りひと", instagram: "rht___07", birthday: "2007/10/07", schoolYear: "大学1年生", region: "茨城県", category: "U18", isFresh: true },
+            { id: 10, grade: "B級", name: "山木 遥斗", ruby: "やまき はると", instagram: "haru.ref_bsk", birthday: "2007/11/09", schoolYear: "大学1年生", region: "京都府", category: "社会人", isStaff: true, isFresh: true },
+            { id: 11, grade: "B級", name: "岩永 颯", ruby: "いわなが はやて", instagram: "hayate1wanaga", birthday: "2008/02/27", schoolYear: "大学1年生", region: "東京都", category: "U18" },
+            { id: 12, grade: "B級", name: "井上 優心", ruby: "いのうえ ゆうしん", instagram: "kochi_be", birthday: "2009/01/13", schoolYear: "高校3年生", region: "高知県", category: "U18", isFresh: true },
+            { id: 13, grade: "C級", name: "佐野 泰晟", ruby: "さの たいせい", instagram: "taisei.200477", birthday: "2004/07/07", schoolYear: "大学4年生", region: "愛知県", category: "U18" },
+            { id: 14, grade: "C級", name: "佐藤 涼奏", ruby: "さとう すずか", instagram: "suzuka_.56", birthday: "2004/11/17", schoolYear: "大学4年生", region: "千葉県", category: "社会人", isFresh: true },
+            { id: 15, grade: "C級", name: "伊藤 翼", ruby: "いとう つばさ", instagram: "tun2.1406", birthday: "2006/02/14", schoolYear: "大学3年生", region: "愛知県", category: "U15" },
+            { id: 16, grade: "C級", name: "吉井 瑠唯", ruby: "よしい るい", instagram: "saruirui0678", birthday: "2006/07/08", schoolYear: "大学2年生", region: "大阪府", category: "社会人" },
+            { id: 17, grade: "C級", name: "村上 伊織", ruby: "むらかみ いおり", instagram: "_iori0208", birthday: "2006/07/22", schoolYear: "大学2年生", region: "兵庫県", category: "学連" },
+            { id: 18, grade: "C級", name: "岡村 祈旺", ruby: "おかむら いお", instagram: "i0.8765", birthday: "2007/01/17", schoolYear: "大学2年生", region: "岐阜県", category: "U12" },
+            { id: 19, grade: "C級", name: "遠藤 煌昊", ruby: "えんどう そら", instagram: "sr_103191", birthday: "2007/05/18", schoolYear: "大学1年生", region: "宮城県", category: "U18" },
+            { id: 20, grade: "C級", name: "針谷 草汰", ruby: "はりや そうた", instagram: "chibaraki_ref_bsk", birthday: "2007/08/18", schoolYear: "大学1年生", region: "千葉県/茨城県", category: "U18" },
+            { id: 21, grade: "C級", name: "林保 翔大", ruby: "りんぽ しょうだい", instagram: "r.syou_2", birthday: "2007/11/29", schoolYear: "大学1年生", region: "兵庫県", category: "学連", isStaff: true },
+            { id: 22, grade: "C級", name: "末広 詠太", ruby: "すえひろ えいた", instagram: "ref_eita", birthday: "2008/08/29", schoolYear: "高校3年生", region: "広島県", category: "U18" },
+            { id: 23, grade: "C級", name: "赤堀 萌心", ruby: "あかほり もこ", instagram: "mk_o.2ren", birthday: "2008/07/20", schoolYear: "高校3年生", region: "岡山県", category: "U12" },
+            { id: 24, grade: "C級", name: "武田 透和", ruby: "たけだ とわ", instagram: "t.baske.ref", birthday: "2009/01/09", schoolYear: "高校3年生", region: "東京都", category: "U18" },
+            { id: 25, grade: "C級", name: "岡野 結翔", ruby: "おかの ゆいと", instagram: "hf_yuito11", birthday: "2009/09/04", schoolYear: "高校2年生", region: "奈良県", category: "U18" },
+            { id: 26, grade: "C級", name: "坂田 瑛汰", ruby: "さかた えいた", instagram: "es_referee", birthday: "2009/11/23", schoolYear: "高校2年生", region: "熊本県", category: "U15" },
+            { id: 27, grade: "C級", name: "鈴木 海音", ruby: "すずき かいと", instagram: "kaito_ref", birthday: "2011/04/20", schoolYear: "中学3年生", region: "愛知県", category: "U15", isFresh: true },
+            { id: 28, grade: "C級", name: "中台 大翔", ruby: "なかだい ひろと", instagram: "n_.cref", birthday: "2011/05/19", schoolYear: "中学3年生", region: "埼玉県", category: "U15" },
+            { id: 29, grade: "D級", name: "渡辺 莉実", ruby: "わたなべ りみ", instagram: "r1_3i8", birthday: "-", schoolYear: "大学1年生", region: "神奈川県", category: "U12" },
+            { id: 30, grade: "D級", name: "菅森 瀬名", ruby: "すがもり せな", instagram: "senaaaaaaa.12", birthday: "2008/01/07", schoolYear: "大学1年生", region: "福島県", category: "U15", isStaff: true },
+            { id: 31, grade: "D級", name: "横溝 快門", ruby: "よこみぞ かいと", instagram: "ref.kaito", birthday: "2008/07/19", schoolYear: "高校3年生", region: "岡山県", category: "U12" },
+            { id: 32, grade: "D級", name: "澤田 康太郎", ruby: "さわだ こうたろう", instagram: "ref.kotaro", birthday: "2009/04/19", schoolYear: "高校2年生", region: "鳥取県", category: "U18", isFresh: true },
+            { id: 33, grade: "D級", name: "嶋谷 悠真", ruby: "しまたに ゆうま", instagram: "yuma__bs_622", birthday: "2009/06/22", schoolYear: "高校2年生", region: "広島県", category: "U18" },
+            { id: 34, grade: "D級", name: "片桐 優太", ruby: "かたぎり ゆうた", instagram: "katta_referee.account", birthday: "2009/10/22", schoolYear: "高校2年生", region: "広島県", category: "U18" },
+            { id: 35, grade: "D級", name: "荒巻 俊介", ruby: "あらまき しゅんすけ", instagram: "shun0645", birthday: "2009/12/07", schoolYear: "高校2年生", region: "静岡県", category: "U18" },
+            { id: 36, grade: "D級", name: "髙橋 悠生", ruby: "たかはし はるき", instagram: "_3lncir", birthday: "2010/03/20", schoolYear: "高校2年生", region: "秋田県", category: "U18" },
+            { id: 37, grade: "D級", name: "福田 和華", ruby: "ふくだ のどか", instagram: "fw_ndk", birthday: "-", schoolYear: "高校2年生", region: "熊本県", category: "U15" },
+            { id: 38, grade: "D級", name: "野底 風真", ruby: "のそこ ふうま", instagram: "fu_basket.ref", birthday: "2010/04/19", schoolYear: "高校1年生", region: "沖縄県", category: "U18" },
+            { id: 39, grade: "D級", name: "甲藤 瑞晶", ruby: "かっとう みずき", instagram: "mizuki11812", birthday: "2011/08/12", schoolYear: "中学3年生", region: "兵庫県", category: "U15" },
+            { id: 40, grade: "E級", name: "香月 琉伽", ruby: "かつき るか", instagram: "r.uk_2", birthday: "2010/02/05", schoolYear: "高校2年生", region: "福岡県", category: "U12" },
+            { id: 41, grade: "E級", name: "荒井 真尋", ruby: "あらい まひろ", instagram: "mahiro1614", birthday: "2011/01/14", schoolYear: "高校1年生", region: "神奈川県", category: "U12" }
+        ];
+
+        function calculateAge(birthdayStr) {
+            if (!birthdayStr || birthdayStr === "-") return "-";
+            const birthDate = new Date(birthdayStr);
+            if (isNaN(birthDate.getTime())) return "-";
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age;
+        }
+
+        members.forEach(m => { m.calculatedAge = calculateAge(m.birthday); });
+
+        const patchImages = { 'S級': 'grade-S.png', 'A級': 'grade-A.png', 'B級': 'grade-B.png', 'C級': 'grade-C.png', 'D級': 'grade-D.png', 'E級': 'grade-E.png' };
+        let state = { grade: 'all', schoolYear: 'all', category: 'all', block: 'all', search: '', sortKey: null, sortDir: 'asc' };
+
+        function getRegionWeight(regionStr) { if (!regionStr || regionStr === "-") return 999; const primaryPref = prefOrder.find(p => regionStr.includes(p)); return primaryPref ? prefOrder.indexOf(primaryPref) : 900; }
+        function handleBlockChange() { state.block = document.getElementById('blockFilter').value; render(); }
+        function setSort(key) { if (state.sortKey === key) state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc'; else { state.sortKey = key; state.sortDir = 'asc'; } render(); }
+        function applyFilters() { state.schoolYear = document.getElementById('schoolYearFilter').value; state.category = document.getElementById('categoryFilter').value; state.search = document.getElementById('searchInput').value.toLowerCase(); render(); }
+        function filterGrade(grade) { state.grade = grade; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); const btnId = grade === 'all' ? 'btn-all' : (grade === 'S級' ? 'btn-S' : `btn-${grade[0]}`); const btn = document.getElementById(btnId); if (btn) btn.classList.add('active'); render(); }
+
+        function openModal(memberId) {
+            const m = members.find(x => x.id === memberId);
+            if (!m) return;
+            document.getElementById('modalGradeLabel').innerHTML = `<span class="grade-badge grade-${m.grade[0].toLowerCase()}">${m.grade}</span>`;
+            const irL = document.getElementById('modalIRLabel');
+            if (m.ir) { let irC = (m.ir === "T級") ? "ir-t" : `ir-${m.ir.charAt(0).toLowerCase()}`; irL.innerHTML = `<span class="grade-badge ${irC}">${m.ir}IR</span>`; irL.classList.remove('hidden'); } else { irL.classList.add('hidden'); }
+            const koL = document.getElementById('modalKoushiLabel'); if (m.isInstructor) { koL.innerHTML = `<span class="grade-badge koushi-badge">講師</span>`; koL.classList.remove('hidden'); } else { koL.classList.add('hidden'); }
+            const stL = document.getElementById('modalStaffLabel'); if (m.isStaff) { stL.innerHTML = `<span class="grade-badge staff-badge">運営</span>`; stL.classList.remove('hidden'); } else { stL.classList.add('hidden'); }
+            const frL = document.getElementById('modalFreshLabel'); if (m.isFresh) { frL.innerHTML = `<span class="grade-badge fresh-badge">FRESH</span>`; frL.classList.remove('hidden'); } else { frL.classList.add('hidden'); }
+            
+            // 名前にルビがある場合は上に小さく表示する
+            const rubyLabel = document.getElementById('modalRuby');
+            if (m.ruby) {
+                rubyLabel.textContent = m.ruby;
+                rubyLabel.classList.remove('hidden');
+                rubyLabel.classList.add('block');
+            } else {
+                rubyLabel.classList.add('hidden');
+                rubyLabel.classList.remove('block');
+            }
+                
+            document.getElementById('modalName').textContent = m.name;
+            document.getElementById('modalInstaID').innerHTML = `<i class="fa-brands fa-instagram text-[14px]" style="color: var(--insta-brand);"></i> <span>${m.instagram}</span>`;
+            
+            document.getElementById('modalRegion').textContent = m.region;
+            document.getElementById('modalCategory').textContent = m.category;
+            document.getElementById('modalSchoolYear').textContent = m.schoolYear;
+            document.getElementById('modalBirthday').textContent = m.birthday;
+            document.getElementById('modalAge').textContent = m.calculatedAge === '-' ? '-' : m.calculatedAge + '歳';
+            const instaUrl = `https://www.instagram.com/${m.instagram}/`;
+            const instaBtn = document.getElementById('modalInstaBtn');
+            instaBtn.href = instaUrl;
+            instaBtn.onclick = (e) => { if (/Line|Instagram|FBAV/i.test(navigator.userAgent)) { e.preventDefault(); window.location.href = instaUrl; } };
+            const instaUrlElem = document.getElementById('modalInstaUrl'); if (instaUrlElem) { instaUrlElem.href = instaUrl; instaUrlElem.textContent = instaUrl; }
+            document.getElementById('modalPatchImg').src = patchImages[m.grade] || '1000017900.png';
+            const modal = document.getElementById('memberModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(() => modal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() { const modal = document.getElementById('memberModal'); modal.classList.remove('active'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 250); document.body.style.overflow = ''; }
+
+        function render() {
+            const tbody = document.getElementById('tableBody');
+            let list = members.filter(m => {
+                const mGrd = state.grade === 'all' || m.grade === state.grade;
+                const mSchYr = state.schoolYear === 'all' || m.schoolYear === state.schoolYear;
+                const mCat = state.category === 'all' || m.category === state.category;
+                let mLoc = state.block === 'all' || blockData[state.block].some(p => m.region.includes(p));
+                const mSchText = `${m.name} ${m.region} ${m.schoolYear}`.toLowerCase().includes(state.search);
+                return mGrd && mSchYr && mCat && mLoc && mSchText;
+            });
+            if (state.sortKey) {
+                list.sort((a, b) => {
+                    let v1 = a[state.sortKey], v2 = b[state.sortKey];
+                    if (typeof v1 === 'string') return state.sortDir === 'asc' ? v1.localeCompare(v2, 'ja') : v2.localeCompare(v1, 'ja');
+                    return state.sortDir === 'asc' ? v1 - v2 : v2 - v1;
+                });
+            }
+            tbody.innerHTML = '';
+            document.getElementById('visibleCount').textContent = list.length;
+            list.forEach((m, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'member-row'; tr.onclick = () => openModal(m.id);
+                let catC = m.category === '社会人' ? 'cat-shakaijin' : (m.category === '学連' ? 'cat-gakuren' : `cat-${m.category.toLowerCase()}`);
+                let tags = `<div class="flex gap-0.5 ml-1">`;
+                if(m.ir) tags += `<span class="list-mini-tag ${(m.ir==='T級'?'list-ir-t':'list-ir-'+m.ir[0].toLowerCase())}">${m.ir}IR</span>`;
+                if(m.isInstructor) tags += `<span class="list-mini-tag list-koushi">講師</span>`;
+                if(m.isStaff) tags += `<span class="list-mini-tag list-staff">運営</span>`;
+                if(m.isFresh) tags += `<span class="list-mini-tag list-fresh">FRESH</span>`;
+                tags += `</div>`;
+                tr.innerHTML = `
+                    <td class="text-center text-slate-400 font-mono text-[10px]">${i+1}</td>
+                    <td class="text-center"><div class="grade-circle grade-${m.grade[0].toLowerCase()} w-5 h-5 text-[11px] mx-auto">${m.grade[0]}</div></td>
+                    <td class="font-bold text-slate-900"><div class="flex items-center"><span>${m.name}</span>${tags}</div></td>
+                    <td onclick="event.stopPropagation()"><a href="https://www.instagram.com/${m.instagram}/" target="_blank" class="insta-tag"><i class="fa-brands fa-instagram"></i><span>${m.instagram}</span></a></td>
+                    <td class="text-slate-500 font-mono text-[10px]">${m.birthday}</td>
+                    <td class="text-center font-bold text-slate-700">${m.calculatedAge}</td>
+                    <td class="text-slate-600">${m.schoolYear}</td>
+                    <td class="font-bold text-slate-700">${m.region}</td>
+                    <td class="text-center"><span class="cat-badge ${catC}">${m.category}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('noResults').classList.toggle('hidden', list.length > 0);
+        }
+
+        function exportToHTML() {
+            const htmlContent = document.documentElement.outerHTML;
+            const fullContent = '<!DOCTYPE html>\n' + htmlContent;
+            const blob = new Blob([fullContent], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'NextCrew_MemberList.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = render;
+    </script>
+</body>
+</html>
