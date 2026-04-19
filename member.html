@@ -242,15 +242,20 @@
             </div>
         </div>
         <div class="max-w-[1440px] mx-auto px-4 flex border-t border-slate-50 items-center overflow-x-auto no-scrollbar">
-            <button onclick="filterGrade('all')" id="btn-all" class="tab-btn active">ALL</button>
-            <button onclick="filterGrade('S級')" id="btn-S" class="tab-btn">S級</button>
-            <button onclick="filterGrade('A級')" id="btn-A" class="tab-btn">A級</button>
-            <button onclick="filterGrade('B級')" id="btn-B" class="tab-btn">B級</button>
-            <button onclick="filterGrade('C級')" id="btn-C" class="tab-btn">C級</button>
-            <button onclick="filterGrade('D級')" id="btn-D" class="tab-btn">D級</button>
-            <button onclick="filterGrade('E級')" id="btn-E" class="tab-btn">E級</button>
-            <div class="ml-auto py-3 shrink-0"><span id="visibleCount" class="text-[12px] font-black text-slate-900">0</span><span class="text-[8px] text-slate-400 font-bold ml-0.5 uppercase">Users</span></div>
-        </div>
+    <button onclick="filterGrade('all')" id="btn-all" class="tab-btn active">ALL</button>
+    <button onclick="filterGrade('S級')" id="btn-S" class="tab-btn">S級</button>
+    <button onclick="filterGrade('A級')" id="btn-A" class="tab-btn">A級</button>
+    <button onclick="filterGrade('B級')" id="btn-B" class="tab-btn">B級</button>
+    <button onclick="filterGrade('C級')" id="btn-C" class="tab-btn">C級</button>
+    <button onclick="filterGrade('D級')" id="btn-D" class="tab-btn">D級</button>
+    <button onclick="filterGrade('E級')" id="btn-E" class="tab-btn">E級</button>
+    
+    <div class="w-[1px] h-4 bg-slate-200 mx-2 shrink-0"></div>
+    <a href="map.html" class="tab-btn flex items-center gap-1.5" style="color: var(--nc-accent); border-bottom-color: transparent;">
+        <i class="fa-solid fa-map-location-dot"></i> マップを見る
+    </a>
+    <div class="ml-auto py-3 shrink-0"><span id="visibleCount" class="text-[12px] font-black text-slate-900">0</span><span class="text-[8px] text-slate-400 font-bold ml-0.5 uppercase">Users</span></div>
+</div>
     </header>
 
     <main class="max-w-[1440px] mx-auto p-4">
