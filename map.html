@@ -379,7 +379,7 @@
                 el.style.gridRow = `${pref.y} / span ${pref.h || 1}`;
                 
                 el.innerHTML = `
-                    <span>${pref.name.replace(/(都|道|府|県)$/, '')}</span>
+                    <span>${pref.name.replace(/(都|府|県)$/, '')}</span>
                     <span class="text-[9px] font-mono mt-0.5 ${count > 0 ? 'opacity-80' : 'opacity-0'}">${count}名</span>
                 `;
 
